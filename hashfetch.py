@@ -1,6 +1,12 @@
 import hashlib
 import os
 
+'''
+This script is used for generating the list of client hashes,
+it searches through a directory and adds each file name & hash to
+a JSON file which can then be used by the main program.
+'''
+
 os.chdir("./CLIENTS")
 
 FILE_NAME = "Hashes.json"
