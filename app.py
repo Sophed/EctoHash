@@ -1,18 +1,32 @@
+import urllib.request
 import customtkinter
 import hashlib
 import json
 import os
 
-FILE_NAME = "Hashes.json"
+#FILE_NAME = "Hashes.json"
 SKIP_DIRS = [".index", ".git"]
+TARGET_REMOTE = "https://raw.githubusercontent.com/Sophed/EctoHash/master/Hashes.json"
 
-print("Loading hashes...")
+print("Loading remote hashes...")
 HASH_LIST = {}
+
+try:
+    with urllib.request.urlopen(TARGET_REMOTE) as url:
+        HASH_LIST = json.load(url)
+        print("Loaded hashes!")
+except:
+    print("Failed to load remote hashes. If the issue persists, ensure you have an internet connection and check the GitHub repo.")
+    exit(1)
+
+'''
 with open(FILE_NAME, 'r') as f:
     HASH_LIST = json.load(f)
+'''
 
 # Dict of files that match a known client hash
 DETECTED_CLIENTS = {}
+
 
 targetDir = ""
 
@@ -25,25 +39,27 @@ def checkFile(hash, file):
 
 def checkDir(dir):
     for file in os.listdir(dir):
-        if file in SKIP_DIRS:
+        if file in SKIP_DIRS or os.path.isdir(file):
             continue
         currentFile = open(file, 'rb')
         hash = hashlib.md5(currentFile.read()).hexdigest()
         if checkFile(hash, file) == True:
             print("Detected " + DETECTED_CLIENTS[file] + " in " + file)
-            label.configure(text="Detected clients, see console.")
 
 def button_callback():
     dir = entry.get()
     if dir == "":
-        label.configure(text="Please enter a directory to scan.")
+        label.configure(text="Please enter a directory to scan")
         return
     if os.path.isdir(dir) == False:
-        label.configure(text="Invalid directory.")
+        label.configure(text="Invalid directory")
         return
     os.chdir(dir)
-    label.configure(text="Scanning...")
     checkDir(dir)
+    if len(DETECTED_CLIENTS) == 0:
+        label.configure(text="Complete: No clients detected")
+    else:
+        label.configure(text="Complete: Detected clients, see console for details")
 
     
 app = customtkinter.CTk()
