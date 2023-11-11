@@ -59,6 +59,7 @@ def button_callback():
 app = customtkinter.CTk()
 app.title("EctoHash")
 app.geometry("400x190")
+app.resizable(False, False)
 
 entry = customtkinter.CTkEntry(
     app,
