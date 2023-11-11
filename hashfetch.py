@@ -26,19 +26,19 @@ for file in os.listdir("./"):
         continue
     
     # Hash file
-    currentFile = open(file, 'rb')
-    hash = hashlib.md5(currentFile.read()).hexdigest()
+    f = open(file, "rb").read()
+    hash = hashlib.md5(f).hexdigest()
     
     # Remove extensions
     for ext in REMOVED_EXTENSIONS:
         file = file.replace(ext, "")
     
     # Add to dict and log
-    DATA[file] = hash
-    print(f"Hashed {file} as {hash}")
+    DATA[file.name] = hash
+    print(f"Hashed {file.name} as {hash}")
 
 # Load JSON from dict
-with open('../' + OUTPUT_FILE, 'w') as f:
+with open("../" + OUTPUT_FILE, "w") as f:
     json.dump(DATA, f, indent=4)
 
-print("Written to " + OUTPUT_FILE + ".")
+print(f"Written to {OUTPUT_FILE}.")
