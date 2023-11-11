@@ -4,8 +4,6 @@ import hashlib
 import json
 import os
 
-#FILE_NAME = "Hashes.json"
-SKIP_DIRS = [".index", ".git"]
 TARGET_REMOTE = "https://raw.githubusercontent.com/Sophed/EctoHash/master/Hashes.json"
 
 print("Loading remote hashes...")
@@ -24,26 +22,22 @@ with open(FILE_NAME, 'r') as f:
     HASH_LIST = json.load(f)
 '''
 
-# Dict of files that match a known client hash
 DETECTED_CLIENTS = {}
 
-
-targetDir = ""
-
-# Check if the hash is in the list of known hashes
-def checkFile(hash, file):
+def scan_file(hash, file):
     if hash in HASH_LIST.values():
+        # https://tenor.com/view/cat-what-is-happening-dim-dim-what-confused-gif-26463317
         DETECTED_CLIENTS[file] = list(HASH_LIST.keys())[list(HASH_LIST.values()).index(hash)]
         return True
     return False
 
-def checkDir(dir):
+def scan_dir(dir):
     for file in os.listdir(dir):
-        if file in SKIP_DIRS or os.path.isdir(file):
+        if os.path.isdir(file):
             continue
-        currentFile = open(file, 'rb')
-        hash = hashlib.md5(currentFile.read()).hexdigest()
-        if checkFile(hash, file) == True:
+        f = open(file, 'rb').read()
+        hash = hashlib.md5(f).hexdigest()
+        if scan_file(hash, file) == True:
             print("Detected " + DETECTED_CLIENTS[file] + " in " + file)
 
 def button_callback():
@@ -55,7 +49,7 @@ def button_callback():
         label.configure(text="Invalid directory")
         return
     os.chdir(dir)
-    checkDir(dir)
+    scan_dir(dir)
     if len(DETECTED_CLIENTS) == 0:
         label.configure(text="Complete: No clients detected")
     else:
