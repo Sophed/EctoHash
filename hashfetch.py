@@ -34,8 +34,8 @@ for file in os.listdir("./"):
         file = file.replace(ext, "")
     
     # Add to dict and log
-    DATA[file.name] = hash
-    print(f"Hashed {file.name} as {hash}")
+    DATA[file] = hash
+    print(f"Hashed {file} as {hash}")
 
 # Load JSON from dict
 with open("../" + OUTPUT_FILE, "w") as f:
