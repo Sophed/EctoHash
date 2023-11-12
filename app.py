@@ -1,7 +1,6 @@
 import hashlib
 import json
 import os
-import urllib.error
 import urllib.request
 
 import customtkinter
@@ -18,7 +17,7 @@ try:
         HASH_LIST = json.load(url)
         print("Loaded hashes!")
         
-except urllib.error.URLError:
+except:
     print("Failed to load remote hashes. If the issue persists, ensure you have an internet connection and check the GitHub repo.")
     exit(1)
 
