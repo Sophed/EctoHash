@@ -1,6 +1,6 @@
-import hashlib
 import json
-import os
+from hashlib import md5
+from pathlib import Path
 
 '''
 This script is used for generating the list of client hashes,
@@ -8,37 +8,20 @@ it searches through a directory and adds each file name & hash to
 a JSON file which can then be used by the main program.
 '''
 
-OUTPUT_FILE = "Hashes.json"
-CLIENTS_DIR = "./CLIENTS"
-REMOVED_EXTENSIONS = [
-    ".jar",
-    ".disabled"
-]
-DATA = {}
+HASH_FILE = 'hashes.json'
+CLIENTS_DIR = 'CLIENTS'
 
-os.chdir(CLIENTS_DIR)
+files = list(Path(CLIENTS_DIR).glob('*.jar'))
+hashes = {}
 
-# Add each file hash to the JSON file
-for file in os.listdir("./"):
-
-    # Skip directories
-    if os.path.isdir(file):
-        continue
+for file in files:
     
-    # Hash file
-    f = open(file, "rb").read()
-    hash = hashlib.md5(f).hexdigest()
-    
-    # Remove extensions
-    for ext in REMOVED_EXTENSIONS:
-        file = file.replace(ext, "")
-    
-    # Add to dict and log
-    DATA[file] = hash
-    print(f"Hashed {file} as {hash}")
+    with open(file, 'rb') as f:
+        file_hash = md5(f.read()).hexdigest()
+        hashes.update({file.name: file_hash})
+        print(f'Hashed {file.name} as {file_hash}')
 
-# Load JSON from dict
-with open("../" + OUTPUT_FILE, "w") as f:
-    json.dump(DATA, f, indent=4)
-
-print(f"Written to {OUTPUT_FILE}.")
+with open(HASH_FILE, 'w') as f:
+    json.dump(hashes, f, indent=4)
+    
+print(f'Written to {HASH_FILE}.')
