@@ -8,12 +8,25 @@ it searches through a directory and adds each file name & hash to
 a JSON file which can then be used by the main program.
 '''
 
-HASH_FILE = 'hashes.json'
-CLIENTS_DIR = 'CLIENTS'
+HASH_FILE = 'Hashes.json'
+CLIENTS_DIR = Path('./CLIENTS')
 
-files = list(Path(CLIENTS_DIR).glob('*.jar'))
+VALID_EXTENSIONS = {
+    '*.jar', 
+    '*.disabled'
+}
+
+files = []
+for ext in VALID_EXTENSIONS:
+    files.extend(CLIENTS_DIR.glob(ext))
+    
+if len(files) == 0:
+    print((f'No files matching the valid extensions were found. \n'
+           f'Clients directory checked: {CLIENTS_DIR.absolute()}. \n'
+           f'Valid file extensions provided: {VALID_EXTENSIONS}. \n'))
+    exit(1)
+
 hashes = {}
-
 for file in files:
     
     with open(file, 'rb') as f:
