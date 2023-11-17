@@ -21,10 +21,9 @@ for ext in VALID_EXTENSIONS:
     files.extend(CLIENTS_DIR.glob(ext))
     
 if len(files) == 0:
-    print(f'''
-          No files matching the valid extensions were found.''')
-    print(f'Clients directory checked: {CLIENTS_DIR}.')
-    print(f'Valid extensions provided: {VALID_EXTENSIONS}.')
+    print((f'No files matching the valid extensions were found. \n'
+           f'Clients directory checked: {CLIENTS_DIR.absolute()}. \n'
+           f'Valid file extensions provided: {VALID_EXTENSIONS}. \n'))
     exit(1)
     
     
